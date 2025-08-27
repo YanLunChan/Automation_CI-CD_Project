@@ -1,0 +1,64 @@
+name: "CI - Run Tests On Push"
+
+# Push and Pull Request Where?
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # Runs tests on every push
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: game-ci/unity-test-runner@v2
+      with:
+        testMode: all
+  
+  #Build when tests pass
+  buildForSupportedPlatforms:
+    name: Build for ${{matrix.targetPlatform}}
+    needs: tests
+    runs-on: ${{matrix.os}}
+    #Set up matrix so platform and what it runs on can be changed here
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - targetPlatform: StandaloneOSX
+            os: macos-latest
+          - targetPlatform: iOS
+            os: macos-latest
+          - targetPlatform: StandaloneWindows64
+            os: ubuntu-latest
+          - targetPlatform: Android
+            os: ubuntu-latest
+    steps:
+    # Full clone with LFS for Unity project reliability and to avoid missing asset errors.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+    # Saves/restores Unity Library per-platform to drastically speed up builds
+      - uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-${{matrix.targetPlatform}}
+          restore-keys: Library-
+      - if: matrix.targetPlatform == 'Android'
+        uses: jlumbroso/free-disk-space@v1.3.1
+      # Builds the project for the target platform using a licensed Unity Editor
+      - uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: ${{ matrix.targetPlatform }}
+      # Packages and uploads the built game files for download
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Build-${{ matrix.targetPlatform }}
+          path: build/${{ matrix.targetPlatform }}
+  
