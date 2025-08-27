@@ -6,11 +6,16 @@ public abstract class SingletonClass<T> : MonoBehaviour where T : Component
 
     public static T Instance { get { return instance; } }
 
-    protected virtual void Awake() 
+    // This is needed for the NUnit test
+    public void SetInstance() 
     {
         if (instance == null)
             instance = this as T;
         else
             Destroy(gameObject);
+    }
+    protected virtual void Awake() 
+    {
+        SetInstance();
     }
 }
