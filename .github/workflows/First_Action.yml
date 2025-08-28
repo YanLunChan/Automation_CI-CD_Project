@@ -1,8 +1,25 @@
 name: First_WorkFlow
 on: workflow_dispatch
 jobs:
-  firstjob:
+  # Runs tests on every push
+  tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Print Greetings
-        run: echo "Hello World"
+    # Add checkout step first
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        lfs: true
+
+    # ▼▼▼ ADD THIS DEBUG STEP RIGHT HERE ▼▼▼
+    - name: Debug - List project files
+      run: ls -la   # This will show all files in the root directory
+
+    # Then run your tests
+    - uses: game-ci/unity-test-runner@v4
+      env:
+        UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        UNITY_EMAIL: ${{ secrets.UNITY_PASSWORD }}
+        UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      with:
+        testMode: all
