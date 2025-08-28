@@ -12,13 +12,18 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
+    # Full clone with LFS for Unity project reliability and to avoid missing asset errors.
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        lfs: true
     - uses: game-ci/unity-test-runner@v4
       env:
         UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
         UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
       with:
-        projectPath: ./
+        projectPath: .
         unityVersion: 6000.0.56f1 
         testMode: all
   
