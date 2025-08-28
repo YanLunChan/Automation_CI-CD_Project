@@ -18,6 +18,7 @@ jobs:
         UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
         UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
       with:
+        projectPath: /github/workspace/.
         unityVersion: 6000.0.56f1 
         testMode: all
   
