@@ -18,6 +18,7 @@ jobs:
         UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
         UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
       with:
+        unityVersion: 6000.0.56f1 
         testMode: all
   
   #Build when tests pass
@@ -59,6 +60,7 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
+          unityVersion: 6000.0.56f1 
           targetPlatform: ${{ matrix.targetPlatform }}
       # Packages and uploads the built game files for download
       - uses: actions/upload-artifact@v4
