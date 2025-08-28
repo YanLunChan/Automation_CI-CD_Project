@@ -19,4 +19,6 @@ public class GameManager : SingletonClass<GameManager>
     public void ResetCounter() => _counterText.text = $"{_counter = 0}";
 
     public void SetCounterText(TextMeshProUGUI tmpText) => _counterText = tmpText;
+
+    public void DecrementCounter() => _counterText.text = $"{--_counter}";
 }
